@@ -1,5 +1,5 @@
 Electronics Workshop 1 Project
-  By Sricharan Vinoth Kumar and Saikiran.S
+  :by Sricharan Vinoth Kumar and Saikiran.S
 
 Objective:
   To encode and decode morse code using Arduino Uno
