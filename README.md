@@ -1,11 +1,11 @@
-Electronics Workshop 1 Project by Sricharan Vinoth Kumar and Saikiran.S
+Electronics Workshop 1 Project by Sricharan Vinoth Kumar and Saikiran S.
 
 Objective:
   To encode and decode morse code using Arduino Uno
 
 Input methods:
   1. Pushbutton
-  2. Node-Red Website
+  2. Node-Red Website (in progress)
 
 Output methods:
   1. 16x2 LCD Display
