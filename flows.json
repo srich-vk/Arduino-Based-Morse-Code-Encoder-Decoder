@@ -1,108 +1,35 @@
 [
     {
-        "id": "1ee6f65ede9e915a",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "0df92213c696849c",
-        "type": "serial in",
-        "z": "1ee6f65ede9e915a",
-        "name": "",
-        "serial": "29245ca915a0e126",
-        "x": 110,
-        "y": 2220,
-        "wires": [
-            [
-                "07352072daec2279"
-            ]
-        ]
-    },
-    {
-        "id": "91b207b78265b765",
+        "id": "db3623c8673b8331",
         "type": "ui_text_input",
-        "z": "1ee6f65ede9e915a",
+        "z": "e6f42defc39bd72b",
         "name": "",
-        "label": "Encoder",
+        "label": "",
         "tooltip": "",
-        "group": "8b362c199ae2ee57",
-        "order": 2,
+        "group": "7b81a1f53d8b7cf2",
+        "order": 0,
         "width": 0,
         "height": 0,
         "passthru": true,
         "mode": "text",
         "delay": "0",
-        "topic": "topic",
+        "topic": "room/light",
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 220,
-        "y": 2360,
+        "x": 360,
+        "y": 260,
         "wires": [
             [
-                "93a9ce37ffc2642a"
+                "023f29a372f510aa"
             ]
         ]
     },
     {
-        "id": "93a9ce37ffc2642a",
-        "type": "serial out",
-        "z": "1ee6f65ede9e915a",
-        "name": "",
-        "serial": "29245ca915a0e126",
-        "x": 630,
-        "y": 2340,
-        "wires": []
-    },
-    {
-        "id": "07352072daec2279",
-        "type": "ui_text",
-        "z": "1ee6f65ede9e915a",
-        "group": "8b362c199ae2ee57",
-        "order": 1,
-        "width": "6",
-        "height": "1",
-        "name": "",
-        "label": "TEST",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 750,
-        "y": 2140,
-        "wires": []
-    },
-    {
-        "id": "29245ca915a0e126",
-        "type": "serial-port",
-        "name": "",
-        "serialport": "COM3",
-        "serialbaud": "9600",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "waitfor": "",
-        "dtr": "none",
-        "rts": "none",
-        "cts": "none",
-        "dsr": "none",
-        "newline": "\\n",
-        "bin": "false",
-        "out": "char",
-        "addchar": "",
-        "responsetimeout": "10000"
-    },
-    {
-        "id": "8b362c199ae2ee57",
+        "id": "7b81a1f53d8b7cf2",
         "type": "ui_group",
-        "name": "[Project] Test",
-        "tab": "cf76f2e3cc350fc5",
+        "name": "encoding ip",
+        "tab": "beb8cb91d96e18f8",
         "order": 1,
         "disp": true,
         "width": "6",
@@ -110,7 +37,7 @@
         "className": ""
     },
     {
-        "id": "cf76f2e3cc350fc5",
+        "id": "beb8cb91d96e18f8",
         "type": "ui_tab",
         "name": "Home",
         "icon": "dashboard",
