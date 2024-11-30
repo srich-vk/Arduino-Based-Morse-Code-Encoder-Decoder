@@ -41,11 +41,11 @@ void loop() {
 
   //Serial.println(digitalRead(MODE_SWITCH));
   if (digitalRead(MODE_SWITCH) == HIGH){
-    Serial.println("Decoding Mode");
+  //  Serial.println("Decoding Mode");
     digitalWrite(MODE_LED, HIGH);
     decode();
   } else {
-    Serial.println("Encoding Mode");
+  //  Serial.println("Encoding Mode");
     digitalWrite(MODE_LED, LOW);
     encode();
   }
@@ -128,6 +128,7 @@ void decode() {
   int scroll_cnt = 0;
   lcd.clear();
   lcd.setCursor(0, 0);
+  static String curr_val = "";
 
   while(1){
   int dur_press = 0;
@@ -147,12 +148,12 @@ void decode() {
     lcd.setCursor(mlen, 1);
     if (dur_press < DOT_THRESHOLD) {   
       lcd.print(".");
-      Serial.print(".");
+    //  Serial.print(".");
       str += "."; // Append a dot
       mlen++;
     } else if (dur_press >= DOT_THRESHOLD) {
       str += "-"; // Append a dash
-      Serial.print("-");
+    //  Serial.print("-");
       lcd.print("_");
       mlen++;
     }
@@ -167,11 +168,12 @@ void decode() {
       delay(10);
       low_count += 10;
         if (low_count > 7000){
-        Serial.println("end of transmission");
+        Serial.println("<EOT>");
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("<EOT>");
         str = "";
+        curr_val = "";
         delay(400);
         return;
       }
@@ -184,11 +186,12 @@ void decode() {
           if(str.compareTo(letters[i]) == 0){
             if (len >= 16){
               lcd.scrollDisplayLeft();
-              Serial.print("scrolled");
+      //        Serial.print("scrolled");
               scroll_cnt++;
             }
             lcd.print((char)(i+'A'));
-            Serial.print((char)(i+'A'));
+      //      Serial.print((char)(i+'A'));
+            curr_val += (char)(i+'A');
             found =1;
             len++;
             break;
@@ -202,13 +205,15 @@ void decode() {
             scroll_cnt++;
           }
           lcd.print((char)(i+'0'));
-          Serial.print((char)(i+'0'));
+        //  Serial.print((char)(i+'0'));
+          curr_val += (char)(i+'0');
           found =1;
           len++;
           break;
         }
         
       }
+      Serial.println(curr_val);
       if(low_count> WORD_THRESHOLD){
         if (len >= 16){
             lcd.scrollDisplayLeft();
@@ -216,17 +221,18 @@ void decode() {
             scroll_cnt++;
           }
           lcd.print(" ");
-          Serial.print(" ");
+        //  Serial.print(" ");
+          curr_val += " ";
           found =1;
           len++;
         }
 
       if (found == 0){
         lcd.print("!");
-        Serial.print("!");
+  //      Serial.print("!");
       }
-      str = "";
-      Serial.println("");
+        str = "";
+    //  Serial.println("");
       lcd.setCursor(scroll_cnt, 1);
       lcd.print("                "); 
       mlen = scroll_cnt;         // Reset the string for the next character
