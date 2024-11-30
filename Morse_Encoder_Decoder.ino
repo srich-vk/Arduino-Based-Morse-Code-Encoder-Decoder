@@ -34,6 +34,7 @@ void setup() {
   Serial.begin(9600);
   lcd.begin(16,2);
   lcd.setCursor(0, 0);
+  //lcd.autoscroll();
 }
 
 void loop() {
@@ -124,6 +125,7 @@ void Flash(char letter){
 void decode() {
   int len = 0;
   int mlen = 0;
+  int scroll_cnt = 0;
   lcd.clear();
   lcd.setCursor(0, 0);
 
@@ -169,6 +171,7 @@ void decode() {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("<EOT>");
+        str = "";
         delay(400);
         return;
       }
@@ -176,47 +179,57 @@ void decode() {
     
     lcd.setCursor(len, 0);
     if (low_count > CHAR_THRESHOLD ) {
-      //Serial.println(str); // Print the accumulated Morse code for the character
       int found =0;
       for(int i = 0; i< 26 && found ==0; i++){
           if(str.compareTo(letters[i]) == 0){
+            if (len >= 16){
+              lcd.scrollDisplayLeft();
+              Serial.print("scrolled");
+              scroll_cnt++;
+            }
             lcd.print((char)(i+'A'));
             Serial.print((char)(i+'A'));
             found =1;
             len++;
-            //mlen = 0;
             break;
           }
       }
       for(int i =0; i<10 && found == 0; i++){
         if(str.compareTo(numbers[i]) == 0){
+          if (len >= 16){
+            lcd.scrollDisplayLeft();
+            //Serial.print("scrolled");
+            scroll_cnt++;
+          }
           lcd.print((char)(i+'0'));
           Serial.print((char)(i+'0'));
           found =1;
           len++;
-          //mlen = 0;
           break;
         }
         
       }
       if(low_count> WORD_THRESHOLD){
+        if (len >= 16){
+            lcd.scrollDisplayLeft();
+            //Serial.print("scrolled");
+            scroll_cnt++;
+          }
           lcd.print(" ");
           Serial.print(" ");
           found =1;
           len++;
-          //mlen = 0;
         }
 
       if (found == 0){
         lcd.print("!");
         Serial.print("!");
-        //len++;
       }
       str = "";
       Serial.println("");
-      lcd.setCursor(0, 1);
+      lcd.setCursor(scroll_cnt, 1);
       lcd.print("                "); 
-      mlen = 0;         // Reset the string for the next character
+      mlen = scroll_cnt;         // Reset the string for the next character
     }
 
   }
