@@ -23,39 +23,110 @@ To be uploaded in the ESP8266 module
 #include <WiFiServerSecure.h>
 #include <WiFiServerSecureBearSSL.h>
 #include <WiFiUdp.h>
-#include<SoftwareSerial.h>
+#include <SoftwareSerial.h>
+#include <PubSubClient.h>
 
+#include <string.h>
+
+const char* ssid = "RASFI";
+const char* password = "RASFI678";
+
+const char* mqtt_server = "192.168.182.38";
+
+WiFiClient espClient22;
+PubSubClient client(espClient22);
 SoftwareSerial mySUART(4, 5);
 
-const char* ssid = "espFI";
-const char* pswd = "espwifi678";
+const char* topic_encod_in = "encoding/inp";
+const char* topic_arduino_serial = "arduino/serial";
+const char* topic_decod_out = "decoding/out";
 
-#define LPIN D8
+void setup_wifi() {
+  delay(10);
+  
+  Serial.println();
+  
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("WiFi connected - NodeMCU IP address: ");
+  Serial.println(WiFi.localIP());
+}
 
-void setup()
-{
-  WiFi.softAP(ssid, pswd);
-  Serial.begin(9600);
-  mySUART.begin(9600);
-  pinMode(LPIN, OUTPUT);
-  delay(1000);
-  if(WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0))){
-    digitalWrite(LPIN, HIGH);
-    Serial.println(WiFi.softAPIP());
-  } else {
-    Serial.println("not deployed");
+void callback(String topic, byte* message, unsigned int length) {
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageInfo = "1_";
+  
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)message[i]);
+    messageInfo += (char)message[i];
+  }
+  Serial.println();
+  if (topic == topic_encod_in) {
+    mySUART.println(messageInfo);
+  }
+  Serial.println();
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    
+    if (client.connect("ESP8266Client22")) {
+      Serial.println("connected");  
+      digitalWrite(D8, HIGH);
+      client.subscribe(topic_encod_in);
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
   }
 }
 
-int once = 0;
+void setup() {
+  mySUART.begin(9600);
+  Serial.begin(9600);
+  setup_wifi();
+  pinMode(D8, OUTPUT);
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+}
 
-void loop()
-{
-  if (mySUART.available()){
-    Serial.print((char)mySUART.read());
+void loop() {
+  if (!client.connected()) {
+    reconnect();
   }
+  client.loop();
 
-  if (Serial.available()){
-    mySUART.write((char)Serial.read());
+  if (mySUART.available()) {
+    String arduinoData = mySUART.readStringUntil('\n');
+    Serial.println(arduinoData);
+    if (arduinoData.length() > 0 && arduinoData[0] == '1' && arduinoData[1] == '_') {
+      arduinoData = arduinoData.substring(2);
+      client.publish(topic_arduino_serial, arduinoData.c_str());
+      client.publish(topic_decod_out, "-");
+      Serial.print("Published to ");
+      Serial.print(topic_arduino_serial);
+      Serial.print(": ");
+      Serial.println(arduinoData);
+    } else if (arduinoData.length() > 2 && arduinoData[0] == '0' && arduinoData[1] == '_'){
+      arduinoData = arduinoData.substring(2);
+      client.publish(topic_decod_out, arduinoData.c_str());
+      client.publish(topic_arduino_serial, "-");
+      Serial.print("Published to ");
+      Serial.print(topic_decod_out);
+      Serial.print(": ");
+      Serial.println(arduinoData);
+    } 
   }
 }
