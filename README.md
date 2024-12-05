@@ -22,6 +22,7 @@ Features:
   4. Internet communication is handled by a ESP8266 Module, specifically the WEMOS D1 MINI.
 
 Languages Used: C++ and Javascript.
+
 Internet Protocols Used: MQTT using Mosquitto Broker. 
 
 Dependencies:
